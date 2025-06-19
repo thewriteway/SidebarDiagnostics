@@ -90,7 +90,7 @@
 	<ItemGroup>
 		<PackageReference Include="DeltaCompressionDotNet" Version="2.0.1" />
 		<PackageReference Include="Extended.Wpf.Toolkit" Version="4.7.25104.5739" />
-		<PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="1.1.0" />
+		<PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="2.0.1" />
 		<PackageReference Include="Mono.Cecil" Version="0.11.6" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="OxyPlot.Contrib.Wpf" Version="2.1.2" />
