@@ -27,9 +27,9 @@
     <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 	<PropertyGroup>
-		<Version>3.7.2</Version>
-		<AssemblyVersion>3.7.2.0</AssemblyVersion>
-		<FileVersion>3.7.2.0</FileVersion>
+		<Version>3.7.3</Version>
+		<AssemblyVersion>3.7.3.0</AssemblyVersion>
+		<FileVersion>3.7.3.0</FileVersion>
 	</PropertyGroup>
   <PropertyGroup>
     <TargetZone>LocalIntranet</TargetZone>

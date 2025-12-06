@@ -1,5 +1,12 @@
 ﻿[
 	{
+		"Version": "3.7.3",
+		"Changes": [
+			"LibreHardwareMonitor Updates"
+		]
+	},
+
+	{
 		"Version": "3.7.2",
 		"Changes": [
 			"Net V8 updates",
