@@ -75,7 +75,7 @@
     <PackageReference Include="TaskScheduler" Version="2.12.2" />
     <PackageReference Include="gong-wpf-dragdrop" Version="4.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.1" />
     <PackageReference Include="Velopack" Version="0.0.1298" />
   </ItemGroup>
   <ItemGroup>
