@@ -6,9 +6,7 @@
   "assignees": ["thewriteway"],
   "separateMinorPatch": true,
   "separateMajorMinor": true,
-  "separateMultipleMajor": true,
-  "separateMultipleMinor": true,
-  "packageRules": [
+    "packageRules": [
     {
       "updateTypes": ["minor", "patch"]
     },
