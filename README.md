@@ -1,9 +1,8 @@
-![Release](https://img.shields.io/github/v/release/thewriteway/SidebarDiagnostics)
-![Downloads](https://img.shields.io/github/downloads/thewriteway/SidebarDiagnostics/total)
-![License](https://img.shields.io/github/license/thewriteway/SidebarDiagnostics)
-![Dependabot](https://img.shields.io/badge/dependabot-enabled-brightgreen)
-![Renovate enabled](https://img.shields.io/badge/renovate-enabled-brightgreen?logo=renovatebot)
-![Stars](https://img.shields.io/github/stars/thewriteway/SidebarDiagnostics)
+![Release](https://shieldcn.dev/github/release/thewriteway/SidebarDiagnostics)
+![Downloads](https://shieldcn.dev/github/downloads/thewriteway/SidebarDiagnostics.svg)
+![Stars](https://shieldcn.dev/github/stars/thewriteway/SidebarDiagnostics)
+![Forks](https://shieldcn.dev/github/forks/thewriteway/SidebarDiagnostics)
+![Commits](https://shieldcn.dev/github/commits/thewriteway/SidebarDiagnostics)
 
 <h1><img src="https://cdn.rawgit.com/ArcadeRenegade/SidebarDiagnostics/master/sidebar.ico" width="64" height="64" /> Sidebar Diagnostics</h1>
 
