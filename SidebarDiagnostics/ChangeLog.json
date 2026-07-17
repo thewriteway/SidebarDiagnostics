@@ -1,7 +1,22 @@
 ﻿[
 
 	{
+		"Version": "3.7.6",
+		"Changes": [
+			"LibreHardwareMonitor Updates",
+			"Reset settings feature added",
+		]
+	},
+
+	{
 		"Version": "3.7.5",
+		"Changes": [
+			"LibreHardwareMonitor Updates"
+		]
+	},
+
+	{
+		"Version": "3.7.4",
 		"Changes": [
 			"LibreHardwareMonitor Updates"
 		]
