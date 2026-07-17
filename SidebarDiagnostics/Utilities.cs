@@ -17,16 +17,6 @@ namespace SidebarDiagnostics.Utilities
         private const string SETTINGS = "settings.json";
         private const string CHANGELOG = "ChangeLog.json";
 
-        public static string Install(Version version)
-        {
-            return Path.Combine(LocalApp, string.Format("app-{0}", version.ToString(3)));
-        }
-
-        public static string Exe(Version version)
-        {
-            return Path.Combine(Install(version), ExeName);
-        }
-
         public static string ChangeLog
         {
             get
@@ -43,14 +33,6 @@ namespace SidebarDiagnostics.Utilities
             }
         }
 
-        public static string TaskBar
-        {
-            get
-            {
-                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar");
-            }
-        }
-
         private static string _assemblyName { get; set; } = null;
 
         public static string AssemblyName
@@ -63,21 +45,6 @@ namespace SidebarDiagnostics.Utilities
                 }
 
                 return _assemblyName;
-            }
-        }
-
-        private static string _exeName { get; set; } = null;
-
-        public static string ExeName
-        {
-            get
-            {
-                if (_exeName == null)
-                {
-                    _exeName = string.Format("{0}.exe", AssemblyName);
-                }
-
-                return _exeName;
             }
         }
 

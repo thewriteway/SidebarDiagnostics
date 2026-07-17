@@ -23,6 +23,15 @@ namespace SidebarDiagnostics
         {
             base.OnStartup(e);
 
+            // SINGLE INSTANCE
+            _instanceMutex = new System.Threading.Mutex(true, @"Local\SidebarDiagnostics", out bool _isFirstInstance);
+
+            if (!_isFirstInstance)
+            {
+                Shutdown();
+                return;
+            }
+
             // ERROR HANDLING
             #if !DEBUG
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(AppDomain_Error);
@@ -57,7 +66,7 @@ namespace SidebarDiagnostics
 
         protected override void OnExit(ExitEventArgs e)
         {
-            TrayIcon.Dispose();
+            TrayIcon?.Dispose();
 
             base.OnExit(e);
         }
@@ -91,13 +100,18 @@ namespace SidebarDiagnostics
 
             if (_result == MessageBoxResult.OK)
             {
-                OpenURL(ConfigurationManager.AppSettings["WikiURL"]);
+                OpenURL(ConfigurationManager.AppSettings["RepoURL"] + "/wiki");
             }
         }
 
         // On .NET Core+, Process.Start(string) no longer shell-executes URLs.
         public static void OpenURL(string url)
         {
+            if (string.IsNullOrEmpty(url))
+            {
+                return;
+            }
+
             Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
         }
 
@@ -213,11 +227,6 @@ namespace SidebarDiagnostics
             _sidebar.AppBarHide();
         }
 
-        private void Donate_Click(object sender, RoutedEventArgs e)
-        {
-            OpenURL(ConfigurationManager.AppSettings["DonateURL"]);
-        }
-
         private void GitHub_Click(object sender, RoutedEventArgs e)
         {
             OpenURL(ConfigurationManager.AppSettings["RepoURL"]);
@@ -260,6 +269,9 @@ namespace SidebarDiagnostics
         }
 
         public static TaskbarIcon TrayIcon { get; set; }
+
+        // Held for the lifetime of the process to enforce a single instance.
+        private static System.Threading.Mutex _instanceMutex;
 
         internal static bool _reloading { get; set; } = false;
     }

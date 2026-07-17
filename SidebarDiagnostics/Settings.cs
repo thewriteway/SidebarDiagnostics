@@ -21,9 +21,23 @@ namespace SidebarDiagnostics.Framework
                 Directory.CreateDirectory(Paths.LocalApp);
             }
 
-            using (StreamWriter _writer = File.CreateText(Paths.SettingsFile))
+            // Write to a temp file first so a crash mid-write can never
+            // destroy the previous good copy.
+            string _path = Paths.SettingsFile;
+            string _temp = _path + ".tmp";
+
+            using (StreamWriter _writer = File.CreateText(_temp))
             {
                 new JsonSerializer() { Formatting = Formatting.Indented }.Serialize(_writer, this);
+            }
+
+            if (File.Exists(_path))
+            {
+                File.Replace(_temp, _path, null);
+            }
+            else
+            {
+                File.Move(_temp, _path);
             }
         }
 
@@ -38,9 +52,25 @@ namespace SidebarDiagnostics.Framework
 
             if (File.Exists(Paths.SettingsFile))
             {
-                using (StreamReader _reader = File.OpenText(Paths.SettingsFile))
+                try
                 {
-                    _return = (Settings)new JsonSerializer().Deserialize(_reader, typeof(Settings));
+                    using (StreamReader _reader = File.OpenText(Paths.SettingsFile))
+                    {
+                        _return = (Settings)new JsonSerializer().Deserialize(_reader, typeof(Settings));
+                    }
+                }
+                catch (JsonException)
+                {
+                    // A corrupted file shouldn't prevent the app from starting.
+                    // Set it aside so the user can recover it, and start with defaults.
+                    try
+                    {
+                        File.Move(Paths.SettingsFile, Paths.SettingsFile + ".bak", true);
+                    }
+                    catch (IOException) { }
+                    catch (UnauthorizedAccessException) { }
+
+                    _return = null;
                 }
             }
 
