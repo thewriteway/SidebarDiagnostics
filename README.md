@@ -25,12 +25,8 @@ Go to the <a href="https://github.com/thewriteway/SidebarDiagnostics/releases">r
 
 If you are changing your screen's DPI settings, <a href="https://github.com/ArcadeRenegade/SidebarDiagnostics/wiki/DPI-Settings">view this page!</a>
 
-### Author Note
-
-This software will always be free on GitHub. If you really like it please consider donating. I'd appreciate it!
-Thanks.
-
-https://www.paypal.me/arcaderenegade
+### Author's Note
+This is forked from https://github.com/ArcadeRenegade/SidebarDiagnostics, all the original work was done there, I'm just maintaining and fixing bugs.
 
 ### Supported OS
 
