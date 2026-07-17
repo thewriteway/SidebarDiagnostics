@@ -29,6 +29,7 @@
     </Window.Resources>
     <DockPanel LastChildFill="True">
         <StackPanel DockPanel.Dock="Bottom" Style="{StaticResource WindowButtons_SM}">
+            <Button Content="Reset" Style="{StaticResource NeutralButton_SM}" Click="ResetButton_Click" ToolTip="Reset all settings to their defaults" />
             <Button Content="{x:Static frame:Resources.ButtonSave}" Click="SaveButton_Click" />
             <Button Content="{x:Static frame:Resources.ButtonApply}" IsEnabled="{Binding Path=IsChanged, Mode=OneWay}" Click="ApplyButton_Click" />
             <Button Click="CloseButton_Click">

@@ -117,10 +117,16 @@ namespace SidebarDiagnostics.Models
 
         private void StartMonitors()
         {
-            _monitorTimer = new DispatcherTimer();
-            _monitorTimer.Interval = TimeSpan.FromMilliseconds(Framework.Settings.Instance.PollingInterval);
-            _monitorTimer.Tick += new EventHandler(MonitorTimer_Tick);
-            _monitorTimer.Start();
+            lock (_monitorLock)
+            {
+                _monitorPaused = false;
+
+                // Poll on a background timer so slow sensor reads never stall the UI.
+                // WPF marshals the resulting property-change notifications itself.
+                _monitorTimer = new System.Timers.Timer(Framework.Settings.Instance.PollingInterval) { AutoReset = false };
+                _monitorTimer.Elapsed += MonitorTimer_Elapsed;
+                _monitorTimer.Start();
+            }
         }
 
         private void UpdateClock()
@@ -135,11 +141,6 @@ namespace SidebarDiagnostics.Models
             }
         }
 
-        private void UpdateMonitors()
-        {
-            MonitorManager.Update();
-        }
-
         private void PauseClock()
         {
             if (_clockTimer != null)
@@ -150,9 +151,14 @@ namespace SidebarDiagnostics.Models
 
         private void PauseMonitors()
         {
-            if (_monitorTimer != null)
+            lock (_monitorLock)
             {
-                _monitorTimer.Stop();
+                _monitorPaused = true;
+
+                if (_monitorTimer != null)
+                {
+                    _monitorTimer.Stop();
+                }
             }
         }
 
@@ -166,9 +172,14 @@ namespace SidebarDiagnostics.Models
 
         private void ResumeMonitors()
         {
-            if (_monitorTimer != null)
+            lock (_monitorLock)
             {
-                _monitorTimer.Start();
+                _monitorPaused = false;
+
+                if (_monitorTimer != null)
+                {
+                    _monitorTimer.Start();
+                }
             }
         }
 
@@ -183,16 +194,20 @@ namespace SidebarDiagnostics.Models
 
         private void DisposeMonitors()
         {
-            if (_monitorTimer != null)
+            lock (_monitorLock)
             {
-                _monitorTimer.Stop();
-                _monitorTimer = null;
-            }
-            
-            if (MonitorManager != null)
-            {
-                MonitorManager.Dispose();
-                _monitorManager = null;
+                if (_monitorTimer != null)
+                {
+                    _monitorTimer.Stop();
+                    _monitorTimer.Dispose();
+                    _monitorTimer = null;
+                }
+
+                if (MonitorManager != null)
+                {
+                    MonitorManager.Dispose();
+                    _monitorManager = null;
+                }
             }
         }
 
@@ -201,9 +216,24 @@ namespace SidebarDiagnostics.Models
             UpdateClock();
         }
 
-        private void MonitorTimer_Tick(object sender, EventArgs e)
+        private void MonitorTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            UpdateMonitors();
+            // AutoReset is off: the timer is restarted only after a pass completes,
+            // so updates can never overlap no matter how slow the sensors are.
+            lock (_monitorLock)
+            {
+                if (_monitorTimer == null || MonitorManager == null)
+                {
+                    return;
+                }
+
+                MonitorManager.Update();
+
+                if (!_monitorPaused)
+                {
+                    _monitorTimer.Start();
+                }
+            }
         }
 
         private bool _ready { get; set; } = false;
@@ -336,7 +366,11 @@ namespace SidebarDiagnostics.Models
 
         private DispatcherTimer _clockTimer { get; set; }
 
-        private DispatcherTimer _monitorTimer { get; set; }
+        private System.Timers.Timer _monitorTimer { get; set; }
+
+        private readonly object _monitorLock = new object();
+
+        private bool _monitorPaused { get; set; }
 
         private bool _disposed { get; set; } = false;
     }

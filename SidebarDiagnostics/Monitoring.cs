@@ -1430,10 +1430,14 @@ namespace SidebarDiagnostics.Monitoring
             {
                 if (disposing)
                 {
-                    if (_alertColorTimer != null)
+                    DispatcherTimer _timer = _alertColorTimer;
+                    _alertColorTimer = null;
+
+                    if (_timer != null)
                     {
-                        _alertColorTimer.Stop();
-                        _alertColorTimer = null;
+                        // Disposal can happen off the UI thread; stop the timer where it lives.
+                        App _app = App.Current;
+                        _app?.Dispatcher.BeginInvoke((Action)(() => _timer.Stop()));
                     }
 
                     _converter = null;
@@ -1651,20 +1655,34 @@ namespace SidebarDiagnostics.Monitoring
                 if (value)
                 {
                     _alertColorFlag = false;
+                }
 
-                    if (Framework.Settings.Instance.AlertBlink)
-                    {
-                        _alertColorTimer = new DispatcherTimer(DispatcherPriority.Normal, App.Current.Dispatcher);
-                        _alertColorTimer.Interval = TimeSpan.FromSeconds(0.5d);
-                        _alertColorTimer.Tick += new EventHandler(AlertColorTimer_Tick);
-                        _alertColorTimer.Start();
-                    }
-                }
-                else if (_alertColorTimer != null)
+                // The blink timer must be managed on the UI thread; metric
+                // updates arrive from the background polling thread.
+                App _app = App.Current;
+
+                if (_app != null)
                 {
-                    _alertColorTimer.Stop();
-                    _alertColorTimer = null;
+                    _app.Dispatcher.BeginInvoke((Action)UpdateAlertTimer);
                 }
+            }
+        }
+
+        private void UpdateAlertTimer()
+        {
+            bool _shouldBlink = !_disposed && _isAlert && Framework.Settings.Instance.AlertBlink;
+
+            if (_shouldBlink && _alertColorTimer == null)
+            {
+                _alertColorTimer = new DispatcherTimer(DispatcherPriority.Normal, App.Current.Dispatcher);
+                _alertColorTimer.Interval = TimeSpan.FromSeconds(0.5d);
+                _alertColorTimer.Tick += new EventHandler(AlertColorTimer_Tick);
+                _alertColorTimer.Start();
+            }
+            else if (!_shouldBlink && _alertColorTimer != null)
+            {
+                _alertColorTimer.Stop();
+                _alertColorTimer = null;
             }
         }
 

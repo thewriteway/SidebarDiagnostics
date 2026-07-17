@@ -165,6 +165,21 @@ namespace SidebarDiagnostics.Models
                 return;
             }
 
+            // Metric updates arrive on the background polling thread, but the
+            // plot's series collections may only be touched on the UI thread.
+            Plot _target = _plot;
+
+            if (_target == null)
+            {
+                return;
+            }
+
+            if (!_target.Dispatcher.CheckAccess())
+            {
+                _target.Dispatcher.BeginInvoke((Action)(() => Metric_PropertyChanged(sender, e)));
+                return;
+            }
+
             iMetric _metric = (iMetric)sender;
 
             if (_data == null || !_data.ContainsKey(_metric))

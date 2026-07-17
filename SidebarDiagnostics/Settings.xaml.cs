@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -8,6 +9,8 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Threading;
 using SidebarDiagnostics.Models;
+using SidebarDiagnostics.Monitoring;
+using SidebarDiagnostics.Utilities;
 using SidebarDiagnostics.Windows;
 using SidebarDiagnostics.Style;
 using Xceed.Wpf.Toolkit;
@@ -289,6 +292,43 @@ namespace SidebarDiagnostics
             EndBind();
 
             e.Handled = true;
+        }
+
+        private void ResetButton_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult _result = System.Windows.MessageBox.Show(
+                "Reset all settings to their defaults? This cannot be undone.",
+                Title,
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning,
+                MessageBoxResult.No);
+
+            if (_result != MessageBoxResult.Yes)
+            {
+                return;
+            }
+
+            try
+            {
+                File.Delete(Paths.SettingsFile);
+            }
+            catch (IOException) { }
+            catch (UnauthorizedAccessException) { }
+
+            Framework.Settings.Instance.Reload();
+            Framework.Settings.Instance.MonitorConfig = MonitorConfig.CheckConfig(Framework.Settings.Instance.MonitorConfig);
+            Framework.Settings.Instance.Save();
+
+            Close();
+
+            Sidebar _sidebar = App.Current.Sidebar;
+
+            if (_sidebar != null)
+            {
+                _sidebar.Reload();
+            }
+
+            App.RefreshIcon();
         }
 
         private async void SaveButton_Click(object sender, RoutedEventArgs e)
