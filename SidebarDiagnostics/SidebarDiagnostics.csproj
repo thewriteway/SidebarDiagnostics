@@ -3,24 +3,6 @@
     <TargetFramework>net8.0-windows10.0.17763.0</TargetFramework>
     <OutputType>WinExe</OutputType>
     <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
-	  <!-- <IsWebBootstrapper>false</IsWebBootstrapper> -->
-	  <!-- <PublishUrl>publish\</PublishUrl> -->
-	  <!-- <Install>true</Install> -->
-	  <!-- <InstallFrom>Disk</InstallFrom> -->
-	  <!-- <UpdateEnabled>false</UpdateEnabled> -->
-	  <!-- <UpdateMode>Foreground</UpdateMode> -->
-	  <!-- <UpdateInterval>7</UpdateInterval> -->
-	  <!-- <UpdateIntervalUnits>Days</UpdateIntervalUnits> -->
-	  <!-- <UpdatePeriodically>false</UpdatePeriodically> -->
-	  <!-- <UpdateRequired>false</UpdateRequired> -->
-	  <!-- <MapFileExtensions>true</MapFileExtensions> -->
-	  <!-- <AutorunEnabled>true</AutorunEnabled> -->
-	  <!-- <UseApplicationTrust>false</UseApplicationTrust> -->
-	  <!-- <PublishWizardCompleted>true</PublishWizardCompleted> -->
-	  <!-- <BootstrapperEnabled>true</BootstrapperEnabled> -->
-	  <!-- <ApplicationRevision>0</ApplicationRevision> -->
-	  <!-- <ApplicationVersion>1.0.0.%2a</ApplicationVersion> -->
-	  <!-- <GenerateAssemblyInfo>false</GenerateAssemblyInfo>  -->
     <UseWPF>true</UseWPF>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
     <PlatformTarget>x64</PlatformTarget>
@@ -60,23 +42,18 @@
     </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="DeltaCompressionDotNet" Version="2.0.1" />
     <PackageReference Include="Extended.Wpf.Toolkit" Version="5.1.2" />
     <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="2.0.1" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="Mono.Cecil" Version="0.11.6" />
     <PackageReference Include="OxyPlot.Contrib.Wpf" Version="2.1.2" />
     <PackageReference Include="OxyPlot.Core" Version="2.2.0" />
     <PackageReference Include="OxyPlot.Wpf" Version="2.2.0" />
     <PackageReference Include="OxyPlot.Wpf.Shared" Version="2.2.0" />
-    <PackageReference Include="SharpCompress" Version="0.49.1" />
-    <PackageReference Include="Splat" Version="20.0.0" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
     <PackageReference Include="TaskScheduler" Version="2.12.2" />
     <PackageReference Include="gong-wpf-dragdrop" Version="4.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.9" />
-    <PackageReference Include="Velopack" Version="0.0.1298" />
   </ItemGroup>
   <ItemGroup>
     <None Update="ChangeLog.json">
@@ -86,13 +63,6 @@
       <SubType>Designer</SubType>
     </None>
     <AppDesigner Include="Properties\" />
-  </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Settings.ico" />

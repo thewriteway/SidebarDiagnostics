@@ -254,9 +254,21 @@ public static class Startup
             get
             {
                 string culture = Framework.Settings.Instance.Culture;
-                return string.Equals(culture, DEFAULT, StringComparison.Ordinal)
-                    ? Default
-                    : new CultureInfo(culture);
+
+                if (string.Equals(culture, DEFAULT, StringComparison.Ordinal))
+                {
+                    return Default;
+                }
+
+                try
+                {
+                    return new CultureInfo(culture);
+                }
+                catch (CultureNotFoundException)
+                {
+                    // A bad value in settings.json shouldn't prevent the app from starting.
+                    return Default;
+                }
             }
         }
     }

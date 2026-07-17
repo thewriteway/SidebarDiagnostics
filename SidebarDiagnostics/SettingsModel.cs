@@ -49,7 +49,6 @@ namespace SidebarDiagnostics.Models
             ToolbarMode = Framework.Settings.Instance.ToolbarMode;
             ClickThrough = Framework.Settings.Instance.ClickThrough;
             ShowTrayIcon = Framework.Settings.Instance.ShowTrayIcon;
-            AutoUpdate = Framework.Settings.Instance.AutoUpdate;
             RunAtStartup = Framework.Settings.Instance.RunAtStartup;
             SidebarWidth = Framework.Settings.Instance.SidebarWidth;
             AutoBGColor = Framework.Settings.Instance.AutoBGColor;
@@ -145,7 +144,6 @@ namespace SidebarDiagnostics.Models
             Framework.Settings.Instance.ToolbarMode = ToolbarMode;
             Framework.Settings.Instance.ClickThrough = ClickThrough;
             Framework.Settings.Instance.ShowTrayIcon = ShowTrayIcon;
-            Framework.Settings.Instance.AutoUpdate = AutoUpdate;
             Framework.Settings.Instance.RunAtStartup = RunAtStartup;
             Framework.Settings.Instance.SidebarWidth = SidebarWidth;
             Framework.Settings.Instance.AutoBGColor = AutoBGColor;
@@ -167,6 +165,13 @@ namespace SidebarDiagnostics.Models
 
             for (int i = 0; i < _config.Length; i++)
             {
+                // HardwareOC is only populated when the sidebar was ready as this window opened.
+                if (_config[i].HardwareOC == null)
+                {
+                    _config[i].Order = Convert.ToByte(_config.Length - i);
+                    continue;
+                }
+
                 HardwareConfig[] _hardware = _config[i].HardwareOC.ToArray();
 
                 for (int v = 0; v < _hardware.Length; v++)
@@ -525,22 +530,6 @@ namespace SidebarDiagnostics.Models
                 _showTrayIcon = value;
 
                 NotifyPropertyChanged("ShowTrayIcon");
-            }
-        }
-
-        private bool _autoUpdate { get; set; }
-
-        public bool AutoUpdate
-        {
-            get
-            {
-                return _autoUpdate;
-            }
-            set
-            {
-                _autoUpdate = value;
-
-                NotifyPropertyChanged("AutoUpdate");
             }
         }
 

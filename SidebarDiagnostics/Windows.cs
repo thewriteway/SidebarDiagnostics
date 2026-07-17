@@ -86,16 +86,16 @@ namespace SidebarDiagnostics.Windows
     internal static class NativeMethods
     {
         [DllImport("user32.dll")]
-        internal static extern long GetWindowLong(IntPtr hwnd, int index);
+        internal static extern int GetWindowLong(IntPtr hwnd, int index);
 
         [DllImport("user32.dll")]
-        internal static extern long GetWindowLongPtr(IntPtr hwnd, int index);
+        internal static extern IntPtr GetWindowLongPtr(IntPtr hwnd, int index);
 
         [DllImport("user32.dll")]
-        internal static extern long SetWindowLong(IntPtr hwnd, int index, long newStyle);
+        internal static extern int SetWindowLong(IntPtr hwnd, int index, int newStyle);
 
         [DllImport("user32.dll")]
-        internal static extern long SetWindowLongPtr(IntPtr hwnd, int index, long newStyle);
+        internal static extern IntPtr SetWindowLongPtr(IntPtr hwnd, int index, IntPtr newStyle);
 
         [DllImport("user32.dll")]
         internal static extern bool SetWindowPos(IntPtr hwnd, IntPtr hwnd_after, int x, int y, int cx, int cy, uint uflags);
@@ -282,11 +282,13 @@ namespace SidebarDiagnostics.Windows
 
             IntPtr _hwnd = new WindowInteropHelper(window).Handle;
 
-            NativeMethods.RegisterDeviceNotification(
+            _notificationHandle = NativeMethods.RegisterDeviceNotification(
                 _hwnd,
                 _buffer,
                 FLAGS.DEVICE_NOTIFY_ALL_INTERFACE_CLASSES
                 );
+
+            Marshal.FreeHGlobal(_buffer);
 
             window.HwndSource.AddHook(DeviceHook);
         }
@@ -299,6 +301,12 @@ namespace SidebarDiagnostics.Windows
             }
 
             IsHooked = false;
+
+            if (_notificationHandle != IntPtr.Zero)
+            {
+                NativeMethods.UnregisterDeviceNotification(_notificationHandle);
+                _notificationHandle = IntPtr.Zero;
+            }
 
             window.HwndSource.RemoveHook(DeviceHook);
         }
@@ -348,6 +356,8 @@ namespace SidebarDiagnostics.Windows
         }
 
         public static bool IsHooked { get; private set; } = false;
+
+        private static IntPtr _notificationHandle { get; set; } = IntPtr.Zero;
 
         private static CancellationTokenSource _cancelRestart { get; set; }
     }
@@ -1342,7 +1352,7 @@ namespace SidebarDiagnostics.Windows
             }
             else
             {
-                _style = NativeMethods.GetWindowLongPtr(_hwnd, WND_STYLE.GWL_EXSTYLE);
+                _style = NativeMethods.GetWindowLongPtr(_hwnd, WND_STYLE.GWL_EXSTYLE).ToInt64();
             }
 
             if (add.HasValue)
@@ -1357,11 +1367,11 @@ namespace SidebarDiagnostics.Windows
 
             if (_32bit)
             {
-                NativeMethods.SetWindowLong(_hwnd, WND_STYLE.GWL_EXSTYLE, _style);
+                NativeMethods.SetWindowLong(_hwnd, WND_STYLE.GWL_EXSTYLE, (int)_style);
             }
             else
             {
-                NativeMethods.SetWindowLongPtr(_hwnd, WND_STYLE.GWL_EXSTYLE, _style);
+                NativeMethods.SetWindowLongPtr(_hwnd, WND_STYLE.GWL_EXSTYLE, new IntPtr(_style));
             }
         }
 

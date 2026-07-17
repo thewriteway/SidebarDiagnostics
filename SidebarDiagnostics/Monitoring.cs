@@ -38,20 +38,19 @@ namespace SidebarDiagnostics.Monitoring
 
             UpdateBoard();
 
- 
-           foreach (var c in config)
-    {
-        if (c.Type == MonitorType.RAM && c.Hardware != null)
-        {
-            c.Hardware = c.Hardware
-                .GroupBy(h => h.ID)
-                .Select(g => g.First())
-                .ToArray();
-    }
-}
+            foreach (MonitorConfig c in config)
+            {
+                if (c.Type == MonitorType.RAM && c.Hardware != null)
+                {
+                    c.Hardware = c.Hardware
+                        .GroupBy(h => h.ID)
+                        .Select(g => g.First())
+                        .ToArray();
+                }
+            }
 
-MonitorPanels = config.Where(c => c.Enabled).OrderByDescending(c => c.Order).Select(c => NewPanel(c)).ToArray();
-}
+            MonitorPanels = config.Where(c => c.Enabled).OrderByDescending(c => c.Order).Select(c => NewPanel(c)).ToArray();
+        }
 
         public void Dispose()
         {
@@ -215,7 +214,8 @@ MonitorPanels = config.Where(c => c.Enabled).OrderByDescending(c => c.Order).Sel
 
         private void UpdateBoard()
         {
-            _board.Update();
+            // No motherboard hardware is detected on some systems (e.g. VMs).
+            _board?.Update();
         }
 
         private MonitorPanel[] _monitorPanels { get; set; }
@@ -1044,15 +1044,21 @@ MonitorPanels = config.Where(c => c.Enabled).OrderByDescending(c => c.Order).Sel
 
         public override void Update()
         {
-            if (!PerformanceCounterCategory.InstanceExists(ID, CATEGORYNAME))
-            {
-                return;
-            }
-
             if (_counterFreeMB != null && _counterFreePercent != null)
             {
-                double _freeGB = _counterFreeMB.NextValue() / 1024d;
-                double _freePercent = _counterFreePercent.NextValue();
+                double _freeGB;
+                double _freePercent;
+
+                try
+                {
+                    _freeGB = _counterFreeMB.NextValue() / 1024d;
+                    _freePercent = _counterFreePercent.NextValue();
+                }
+                catch (InvalidOperationException)
+                {
+                    // The counter instance no longer exists (drive removed).
+                    return;
+                }
 
                 double _usedPercent = 100d - _freePercent;
 
@@ -1180,7 +1186,7 @@ MonitorPanels = config.Where(c => c.Enabled).OrderByDescending(c => c.Order).Sel
         private const string BYTESRECEIVEDPERSECOND = "Bytes Received/sec";
         private const string BYTESSENTPERSECOND = "Bytes Sent/sec";
 
-        public NetworkMonitor(string id, string name, string extIP, MetricConfig[] metrics, bool showName = true, bool roundAll = false, bool useBytes = false, double bandwidthInAlert = 0, double bandwidthOutAlert = 0) : base(id, name, showName)
+        public NetworkMonitor(string id, string name, MetricConfig[] metrics, bool showName = true, bool roundAll = false, bool useBytes = false, double bandwidthInAlert = 0, double bandwidthOutAlert = 0) : base(id, name, showName)
         {
             iConverter _converter;
 
@@ -1205,9 +1211,10 @@ MonitorPanels = config.Where(c => c.Enabled).OrderByDescending(c => c.Order).Sel
                 }
             }
 
-            if (!string.IsNullOrEmpty(extIP))
+            if (metrics.IsEnabled(MetricKey.NetworkExtIP))
             {
-                _metrics.Add(new IPMetric(extIP, MetricKey.NetworkExtIP, DataType.IP));
+                // Filled in asynchronously by GetInstances once the lookup completes.
+                _metrics.Add(new IPMetric("...", MetricKey.NetworkExtIP, DataType.IP));
             }
 
             if (metrics.IsEnabled(MetricKey.NetworkIn))
@@ -1256,31 +1263,45 @@ MonitorPanels = config.Where(c => c.Enabled).OrderByDescending(c => c.Order).Sel
             int _bandwidthInAlert = parameters.GetValue<int>(ParamKey.BandwidthInAlert);
             int _bandwidthOutAlert = parameters.GetValue<int>(ParamKey.BandwidthOutAlert);
 
-            string _extIP = null;
-
-            if (metrics.IsEnabled(MetricKey.NetworkExtIP))
-            {
-                _extIP = GetExternalIPAddressAsync().GetAwaiter().GetResult();
-            }
-
-            return (
+            NetworkMonitor[] _instances = (
                 from hw in GetHardware()
                 join c in hardwareConfig on hw.ID equals c.ID into merged
                 from n in merged.DefaultIfEmpty(hw).Select(n => { n.ActualName = hw.Name; return n; })
                 where n.Enabled
                 orderby n.Order descending, n.Name ascending
-                select new NetworkMonitor(n.ID, n.Name ?? n.ActualName, _extIP, metrics, _showName, _roundAll, _useBytes, _bandwidthInAlert, _bandwidthOutAlert)
+                select new NetworkMonitor(n.ID, n.Name ?? n.ActualName, metrics, _showName, _roundAll, _useBytes, _bandwidthInAlert, _bandwidthOutAlert)
                 ).ToArray();
-        }
 
-        public override void Update()
-        {
-            if (!PerformanceCounterCategory.InstanceExists(ID, CATEGORYNAME))
+            if (metrics.IsEnabled(MetricKey.NetworkExtIP))
             {
-                return;
+                IPMetric[] _extIPMetrics = _instances.SelectMany(i => i.Metrics).OfType<IPMetric>().Where(m => m.Key == MetricKey.NetworkExtIP).ToArray();
+
+                if (_extIPMetrics.Length > 0)
+                {
+                    // Resolve in the background so a slow lookup can't stall startup or reload.
+                    GetExternalIPAddressAsync().ContinueWith(t =>
+                    {
+                        string _ip = t.Status == TaskStatus.RanToCompletion && !string.IsNullOrEmpty(t.Result) ? t.Result : "-";
+
+                        App _app = App.Current;
+
+                        if (_app == null)
+                        {
+                            return;
+                        }
+
+                        _app.Dispatcher.BeginInvoke((Action)(() =>
+                        {
+                            foreach (IPMetric _metric in _extIPMetrics)
+                            {
+                                _metric.SetText(_ip);
+                            }
+                        }));
+                    });
+                }
             }
 
-            base.Update();
+            return _instances;
         }
 
         private static string GetAdapterIPAddress(string name)
@@ -1793,6 +1814,11 @@ MonitorPanels = config.Where(c => c.Enabled).OrderByDescending(c => c.Order).Sel
             Text = ipAddress;
         }
 
+        public void SetText(string text)
+        {
+            Text = text;
+        }
+
         public new void Dispose()
         {
             Dispose(true);
@@ -1849,7 +1875,14 @@ MonitorPanels = config.Where(c => c.Enabled).OrderByDescending(c => c.Order).Sel
 
         public override void Update()
         {
-            Update(_counter.NextValue());
+            try
+            {
+                Update(_counter.NextValue());
+            }
+            catch (InvalidOperationException)
+            {
+                // The counter instance no longer exists (drive/adapter removed).
+            }
         }
 
         private PerformanceCounter _counter { get; set; }
@@ -1884,6 +1917,7 @@ MonitorPanels = config.Where(c => c.Enabled).OrderByDescending(c => c.Order).Sel
         {
             MonitorConfig _clone = (MonitorConfig)MemberwiseClone();
             _clone.Hardware = _clone.Hardware.Select(h => h.Clone()).ToArray();
+            _clone.Metrics = _clone.Metrics.Select(m => m.Clone()).ToArray();
             _clone.Params = _clone.Params.Select(p => p.Clone()).ToArray();
 
             if (_clone.HardwareOC != null)
@@ -2336,9 +2370,9 @@ MonitorPanels = config.Where(c => c.Enabled).OrderByDescending(c => c.Order).Sel
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public ConfigParam Clone()
+        public MetricConfig Clone()
         {
-            return (ConfigParam)MemberwiseClone();
+            return (MetricConfig)MemberwiseClone();
         }
 
         object ICloneable.Clone()
@@ -2482,7 +2516,8 @@ MonitorPanels = config.Where(c => c.Enabled).OrderByDescending(c => c.Order).Sel
             }
             set
             {
-                if (value.GetType() == typeof(long))
+                // JSON deserializes whole numbers as long; the rest of the app expects int.
+                if (value is long)
                 {
                     _value = Convert.ToInt32(value);
                 }

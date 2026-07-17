@@ -176,23 +176,6 @@ namespace SidebarDiagnostics.Framework
             }
         }
 
-        private bool _autoUpdate { get; set; } = true;
-
-        [JsonProperty]
-        public bool AutoUpdate
-        {
-            get
-            {
-                return _autoUpdate;
-            }
-            set
-            {
-                _autoUpdate = value;
-
-                NotifyPropertyChanged("AutoUpdate");
-            }
-        }
-
         private bool _runAtStartup { get; set; } = true;
 
         [JsonProperty]
