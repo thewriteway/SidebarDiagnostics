@@ -241,7 +241,9 @@ namespace SidebarDiagnostics
         {
             Exception ex = (Exception)e.ExceptionObject;
 
-            System.Windows.MessageBox.Show(ex.ToString(), Framework.Resources.ErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.DefaultDesktopOnly);
+            ErrorLog.Write(ex);
+
+            System.Windows.MessageBox.Show(string.Format("{0}{1}{1}{2}", ex, Environment.NewLine, string.Format(Framework.Resources.ErrorLogged, ErrorLog.FilePath)), Framework.Resources.ErrorTitle, MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.DefaultDesktopOnly);
         }
         
         public Sidebar Sidebar

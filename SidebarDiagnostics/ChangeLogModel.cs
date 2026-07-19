@@ -8,7 +8,7 @@ using SidebarDiagnostics.Framework;
 
 namespace SidebarDiagnostics.Models
 {
-    public class ChangeLogModel : INotifyPropertyChanged
+    public class ChangeLogModel : PropertyChangedBase
     {
         public ChangeLogModel(Version version)
         {
@@ -28,46 +28,20 @@ namespace SidebarDiagnostics.Models
             }
         }
 
-        public void NotifyPropertyChanged(string propertyName)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private string _title { get; set; }
+        private string _title;
 
         public string Title
         {
-            get
-            {
-                return _title;
-            }
-            set
-            {
-                _title = value;
-
-                NotifyPropertyChanged("Title");
-            }
+            get => _title;
+            set => SetProperty(ref _title, value);
         }
 
-        private string[] _changes { get; set; }
+        private string[] _changes;
 
         public string[] Changes
         {
-            get
-            {
-                return _changes;
-            }
-            set
-            {
-                _changes = value;
-
-                NotifyPropertyChanged("Changes");
-            }
+            get => _changes;
+            set => SetProperty(ref _changes, value);
         }
     }
 

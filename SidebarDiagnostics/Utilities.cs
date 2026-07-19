@@ -52,20 +52,21 @@ namespace SidebarDiagnostics.Utilities
 
         public static string SettingsFile
         {
-           get
+            get
             {
-               if (_settingsFile == null)
-              {
-               string currentDirPath = Path.Combine(Environment.CurrentDirectory, SETTINGS);
-               string localAppPath = Path.Combine(LocalApp, SETTINGS);
+                if (_settingsFile == null)
+                {
+                    string currentDirPath = Path.Combine(Environment.CurrentDirectory, SETTINGS);
+                    string localAppPath = Path.Combine(LocalApp, SETTINGS);
 
-               // Prefer the settings file in the current directory, if it exists
-               _settingsFile = File.Exists(currentDirPath) ? currentDirPath : localAppPath;
-           }
+                    // Prefer the settings file in the current directory, if it exists
+                    _settingsFile = File.Exists(currentDirPath) ? currentDirPath : localAppPath;
+                }
 
-          return _settingsFile;
-         }
-}
+                return _settingsFile;
+            }
+        }
+
         private static string _localApp { get; set; } = null;
 
         public static string LocalApp
@@ -82,102 +83,128 @@ namespace SidebarDiagnostics.Utilities
         }
     }
 
-public static class Startup
-{
-    public static bool StartupTaskExists()
+    public static class ErrorLog
     {
-        using (TaskService taskService = new TaskService())
+        private const string FILENAME = "error.log";
+
+        public static string FilePath
         {
-            Task task = taskService.FindTask(Constants.Generic.TASKNAME);
+            get
+            {
+                return Path.Combine(Paths.LocalApp, FILENAME);
+            }
+        }
 
-            if (task == null)
-                return false;
+        public static void Write(Exception ex)
+        {
+            try
+            {
+                if (!Directory.Exists(Paths.LocalApp))
+                {
+                    Directory.CreateDirectory(Paths.LocalApp);
+                }
 
-            ExecAction action = task.Definition.Actions.OfType<ExecAction>().FirstOrDefault();
-
-            string currentExe = Process.GetCurrentProcess().MainModule.FileName;
-
-            // Check if it points to the correct exe (not a DLL or SYS)
-            if (action == null || !string.Equals(action.Path, currentExe, StringComparison.OrdinalIgnoreCase))
-                return false;
-
-            return true;
+                File.AppendAllText(FilePath, string.Format("[{0:yyyy-MM-dd HH:mm:ss}] {1}{2}{2}", DateTime.Now, ex, Environment.NewLine));
+            }
+            catch (Exception)
+            {
+                // Logging must never crash the app.
+            }
         }
     }
 
-    public static void EnableStartupTask(string exePath = null)
+    public static class Startup
     {
-        try
+        public static bool StartupTaskExists()
         {
             using (TaskService taskService = new TaskService())
             {
-                // Remove any legacy SidebarDiagnostics tasks that point to wrong files
-                CleanLegacyTasks(taskService);
+                Task task = taskService.FindTask(Constants.Generic.TASKNAME);
 
-                TaskDefinition def = taskService.NewTask();
-                def.Triggers.Add(new LogonTrigger { Enabled = true });
+                if (task == null)
+                    return false;
 
-                string targetExe = exePath ?? Process.GetCurrentProcess().MainModule.FileName;
-                def.Actions.Add(new ExecAction(targetExe));
+                ExecAction action = task.Definition.Actions.OfType<ExecAction>().FirstOrDefault();
 
-                def.Principal.RunLevel = TaskRunLevel.Highest;
-                def.Settings.DisallowStartIfOnBatteries = false;
-                def.Settings.StopIfGoingOnBatteries = false;
-                def.Settings.ExecutionTimeLimit = TimeSpan.Zero;
+                string currentExe = Process.GetCurrentProcess().MainModule.FileName;
 
-                taskService.RootFolder.RegisterTaskDefinition(Constants.Generic.TASKNAME, def);
+                // Check if it points to the correct exe (not a DLL or SYS)
+                if (action == null || !string.Equals(action.Path, currentExe, StringComparison.OrdinalIgnoreCase))
+                    return false;
+
+                return true;
             }
         }
-        catch (Exception e)
+
+        public static void EnableStartupTask(string exePath = null)
         {
-            using (EventLog log = new EventLog("Application"))
+            try
             {
-                log.Source = Resources.AppName;
-                log.WriteEntry(e.ToString(), EventLogEntryType.Error, 100, 1);
-            }
-        }
-    }
-
-    public static void DisableStartupTask()
-    {
-        using (TaskService taskService = new TaskService())
-        {
-            taskService.RootFolder.DeleteTask(Constants.Generic.TASKNAME, false);
-        }
-    }
-
-    /// <summary>
-    /// Deletes legacy SidebarDiagnostics tasks that point to DLL or SYS files.
-    /// </summary>
-    private static void CleanLegacyTasks(TaskService taskService)
-    {
-        string[] legacyPaths = new[]
-        {
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SidebarDiagnostics", "SidebarDiagnostics.dll"),
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SidebarDiagnostics", "SidebarDiagnostics.sys"),
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SidebarDiagnostics", "SidebarDiagnostics.exe")
-        };
-
-        foreach (Task t in taskService.RootFolder.AllTasks)
-        {
-            if (t.Name.Equals(Constants.Generic.TASKNAME, StringComparison.OrdinalIgnoreCase))
-            {
-                var action = t.Definition.Actions.OfType<ExecAction>().FirstOrDefault();
-                if (action != null && legacyPaths.Any(lp => string.Equals(lp, action.Path, StringComparison.OrdinalIgnoreCase)))
+                using (TaskService taskService = new TaskService())
                 {
-                    try
+                    // Remove any legacy SidebarDiagnostics tasks that point to wrong files
+                    CleanLegacyTasks(taskService);
+
+                    TaskDefinition def = taskService.NewTask();
+                    def.Triggers.Add(new LogonTrigger { Enabled = true });
+
+                    string targetExe = exePath ?? Process.GetCurrentProcess().MainModule.FileName;
+                    def.Actions.Add(new ExecAction(targetExe));
+
+                    def.Principal.RunLevel = TaskRunLevel.Highest;
+                    def.Settings.DisallowStartIfOnBatteries = false;
+                    def.Settings.StopIfGoingOnBatteries = false;
+                    def.Settings.ExecutionTimeLimit = TimeSpan.Zero;
+
+                    taskService.RootFolder.RegisterTaskDefinition(Constants.Generic.TASKNAME, def);
+                }
+            }
+            catch (Exception e)
+            {
+                ErrorLog.Write(e);
+            }
+        }
+
+        public static void DisableStartupTask()
+        {
+            using (TaskService taskService = new TaskService())
+            {
+                taskService.RootFolder.DeleteTask(Constants.Generic.TASKNAME, false);
+            }
+        }
+
+        /// <summary>
+        /// Deletes legacy SidebarDiagnostics tasks that point to DLL or SYS files.
+        /// </summary>
+        private static void CleanLegacyTasks(TaskService taskService)
+        {
+            string[] legacyPaths = new[]
+            {
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SidebarDiagnostics", "SidebarDiagnostics.dll"),
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SidebarDiagnostics", "SidebarDiagnostics.sys"),
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SidebarDiagnostics", "SidebarDiagnostics.exe")
+            };
+
+            foreach (Task t in taskService.RootFolder.AllTasks)
+            {
+                if (t.Name.Equals(Constants.Generic.TASKNAME, StringComparison.OrdinalIgnoreCase))
+                {
+                    var action = t.Definition.Actions.OfType<ExecAction>().FirstOrDefault();
+                    if (action != null && legacyPaths.Any(lp => string.Equals(lp, action.Path, StringComparison.OrdinalIgnoreCase)))
                     {
-                        taskService.RootFolder.DeleteTask(t.Name, false);
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine($"Failed to delete legacy task {t.Name}: {ex.Message}");
+                        try
+                        {
+                            taskService.RootFolder.DeleteTask(t.Name, false);
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine($"Failed to delete legacy task {t.Name}: {ex.Message}");
+                        }
                     }
                 }
             }
         }
     }
-}
 
     public static class Culture
     {

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using SidebarDiagnostics.Utilities;
 using SidebarDiagnostics.Monitoring;
@@ -12,7 +13,7 @@ using SidebarDiagnostics.Framework;
 
 namespace SidebarDiagnostics.Models
 {
-    public class SettingsModel : INotifyPropertyChanged
+    public class SettingsModel : PropertyChangedBase
     {
         public SettingsModel(Sidebar sidebar)
         {
@@ -252,20 +253,15 @@ namespace SidebarDiagnostics.Models
             IsChanged = false;
         }
 
-        public void NotifyPropertyChanged(string propertyName)
+        public override void NotifyPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
+            base.NotifyPropertyChanged(propertyName);
 
-            if (propertyName != "IsChanged")
+            if (propertyName != nameof(IsChanged))
             {
                 IsChanged = true;
             }
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         private void Child_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -277,564 +273,284 @@ namespace SidebarDiagnostics.Models
             IsChanged = true;
         }
 
-        private bool _isChanged { get; set; } = false;
+        private bool _isChanged = false;
 
         public bool IsChanged
         {
-            get
-            {
-                return _isChanged;
-            }
-            set
-            {
-                _isChanged = value;
-
-                NotifyPropertyChanged("IsChanged");
-            }
+            get => _isChanged;
+            set => SetProperty(ref _isChanged, value);
         }
 
-        private DockEdge _dockEdge { get; set; }
+        private DockEdge _dockEdge;
 
         public DockEdge DockEdge
         {
-            get
-            {
-                return _dockEdge;
-            }
-            set
-            {
-                _dockEdge = value;
-
-                NotifyPropertyChanged("DockEdge");
-            }
+            get => _dockEdge;
+            set => SetProperty(ref _dockEdge, value);
         }
 
-        private DockItem[] _dockEdgeItems { get; set; }
+        private DockItem[] _dockEdgeItems;
 
         public DockItem[] DockEdgeItems
         {
-            get
-            {
-                return _dockEdgeItems;
-            }
-            set
-            {
-                _dockEdgeItems = value;
-
-                NotifyPropertyChanged("DockEdgeItems");
-            }
+            get => _dockEdgeItems;
+            set => SetProperty(ref _dockEdgeItems, value);
         }
 
-        private int _screenIndex { get; set; }
+        private int _screenIndex;
 
         public int ScreenIndex
         {
-            get
-            {
-                return _screenIndex;
-            }
-            set
-            {
-                _screenIndex = value;
-
-                NotifyPropertyChanged("ScreenIndex");
-            }
+            get => _screenIndex;
+            set => SetProperty(ref _screenIndex, value);
         }
 
-        private ScreenItem[] _screenItems { get; set; }
+        private ScreenItem[] _screenItems;
 
         public ScreenItem[] ScreenItems
         {
-            get
-            {
-                return _screenItems;
-            }
-            set
-            {
-                _screenItems = value;
-
-                NotifyPropertyChanged("ScreenItems");
-            }
+            get => _screenItems;
+            set => SetProperty(ref _screenItems, value);
         }
 
-        private string _culture { get; set; }
+        private string _culture;
 
         public string Culture
         {
-            get
-            {
-                return _culture;
-            }
-            set
-            {
-                _culture = value;
-
-                NotifyPropertyChanged("Culture");
-            }
+            get => _culture;
+            set => SetProperty(ref _culture, value);
         }
 
-        private CultureItem[] _cultureItems { get; set; }
+        private CultureItem[] _cultureItems;
 
         public CultureItem[] CultureItems
         {
-            get
-            {
-                return _cultureItems;
-            }
-            set
-            {
-                _cultureItems = value;
-
-                NotifyPropertyChanged("CultureItems");
-            }
+            get => _cultureItems;
+            set => SetProperty(ref _cultureItems, value);
         }
 
-        private double _uiScale { get; set; }
+        private double _uiScale;
 
         public double UIScale
         {
-            get
-            {
-                return _uiScale;
-            }
-            set
-            {
-                _uiScale = value;
-
-                NotifyPropertyChanged("UIScale");
-            }
+            get => _uiScale;
+            set => SetProperty(ref _uiScale, value);
         }
 
-        private int _xOffset { get; set; }
+        private int _xOffset;
 
         public int XOffset
         {
-            get
-            {
-                return _xOffset;
-            }
-            set
-            {
-                _xOffset = value;
-
-                NotifyPropertyChanged("XOffset");
-            }
+            get => _xOffset;
+            set => SetProperty(ref _xOffset, value);
         }
 
-        private int _yOffset { get; set; }
+        private int _yOffset;
 
         public int YOffset
         {
-            get
-            {
-                return _yOffset;
-            }
-            set
-            {
-                _yOffset = value;
-
-                NotifyPropertyChanged("YOffset");
-            }
+            get => _yOffset;
+            set => SetProperty(ref _yOffset, value);
         }
 
-        private int _pollingInterval { get; set; }
+        private int _pollingInterval;
 
         public int PollingInterval
         {
-            get
-            {
-                return _pollingInterval;
-            }
-            set
-            {
-                _pollingInterval = value;
-
-                NotifyPropertyChanged("PollingInterval");
-            }
+            get => _pollingInterval;
+            set => SetProperty(ref _pollingInterval, value);
         }
 
-        private bool _useAppBar { get; set; }
+        private bool _useAppBar;
 
         public bool UseAppBar
         {
-            get
-            {
-                return _useAppBar;
-            }
-            set
-            {
-                _useAppBar = value;
-
-                NotifyPropertyChanged("UseAppBar");
-            }
+            get => _useAppBar;
+            set => SetProperty(ref _useAppBar, value);
         }
 
-        private bool _alwaysTop { get; set; }
+        private bool _alwaysTop;
 
         public bool AlwaysTop
         {
-            get
-            {
-                return _alwaysTop;
-            }
-            set
-            {
-                _alwaysTop = value;
-
-                NotifyPropertyChanged("AlwaysTop");
-            }
+            get => _alwaysTop;
+            set => SetProperty(ref _alwaysTop, value);
         }
 
-        private bool _toolbarMode { get; set; }
+        private bool _toolbarMode;
         
         public bool ToolbarMode
         {
-            get
-            {
-                return _toolbarMode;
-            }
-            set
-            {
-                _toolbarMode = value;
-
-                NotifyPropertyChanged("ToolbarMode");
-            }
+            get => _toolbarMode;
+            set => SetProperty(ref _toolbarMode, value);
         }
 
-        private bool _clickThrough { get; set; }
+        private bool _clickThrough;
 
         public bool ClickThrough
         {
-            get
-            {
-                return _clickThrough;
-            }
-            set
-            {
-                _clickThrough = value;
-
-                NotifyPropertyChanged("ClickThrough");
-            }
+            get => _clickThrough;
+            set => SetProperty(ref _clickThrough, value);
         }
 
-        private bool _showTrayIcon { get; set; }
+        private bool _showTrayIcon;
 
         public bool ShowTrayIcon
         {
-            get
-            {
-                return _showTrayIcon;
-            }
-            set
-            {
-                _showTrayIcon = value;
-
-                NotifyPropertyChanged("ShowTrayIcon");
-            }
+            get => _showTrayIcon;
+            set => SetProperty(ref _showTrayIcon, value);
         }
 
-        private bool _runAtStartup { get; set; }
+        private bool _runAtStartup;
 
         public bool RunAtStartup
         {
-            get
-            {
-                return _runAtStartup;
-            }
-            set
-            {
-                _runAtStartup = value;
-
-                NotifyPropertyChanged("RunAtStartup");
-            }
+            get => _runAtStartup;
+            set => SetProperty(ref _runAtStartup, value);
         }
 
-        private int _sidebarWidth { get; set; }
+        private int _sidebarWidth;
 
         public int SidebarWidth
         {
-            get
-            {
-                return _sidebarWidth;
-            }
-            set
-            {
-                _sidebarWidth = value;
-
-                NotifyPropertyChanged("SidebarWidth");
-            }
+            get => _sidebarWidth;
+            set => SetProperty(ref _sidebarWidth, value);
         }
 
-        private bool _autoBGColor { get; set; }
+        private bool _autoBGColor;
 
         public bool AutoBGColor
         {
-            get
-            {
-                return _autoBGColor;
-            }
-            set
-            {
-                _autoBGColor = value;
-
-                NotifyPropertyChanged("AutoBGColor");
-            }
+            get => _autoBGColor;
+            set => SetProperty(ref _autoBGColor, value);
         }
 
-        private string _bgColor { get; set; }
+        private string _bgColor;
 
         public string BGColor
         {
-            get
-            {
-                return _bgColor;
-            }
-            set
-            {
-                _bgColor = value;
-
-                NotifyPropertyChanged("BGColor");
-            }
+            get => _bgColor;
+            set => SetProperty(ref _bgColor, value);
         }
 
-        private double _bgOpacity { get; set; }
+        private double _bgOpacity;
 
         public double BGOpacity
         {
-            get
-            {
-                return _bgOpacity;
-            }
-            set
-            {
-                _bgOpacity = value;
-
-                NotifyPropertyChanged("BGOpacity");
-            }
+            get => _bgOpacity;
+            set => SetProperty(ref _bgOpacity, value);
         }
 
-        private TextAlign _textAlign { get; set; }
+        private TextAlign _textAlign;
 
         public TextAlign TextAlign
         {
-            get
-            {
-                return _textAlign;
-            }
-            set
-            {
-                _textAlign = value;
-
-                NotifyPropertyChanged("TextAlign");
-            }
+            get => _textAlign;
+            set => SetProperty(ref _textAlign, value);
         }
 
-        private TextAlignItem[] _textAlignItems { get; set; }
+        private TextAlignItem[] _textAlignItems;
 
         public TextAlignItem[] TextAlignItems
         {
-            get
-            {
-                return _textAlignItems;
-            }
-            set
-            {
-                _textAlignItems = value;
-
-                NotifyPropertyChanged("TextAlignItems");
-            }
+            get => _textAlignItems;
+            set => SetProperty(ref _textAlignItems, value);
         }
 
-        private FontSetting _fontSetting { get; set; }
+        private FontSetting _fontSetting;
 
         public FontSetting FontSetting
         {
-            get
-            {
-                return _fontSetting;
-            }
-            set
-            {
-                _fontSetting = value;
-
-                NotifyPropertyChanged("FontSize");
-            }
+            get => _fontSetting;
+            set => SetProperty(ref _fontSetting, value);
         }
 
-        private FontSetting[] _fontSettingItems { get;  set;}
+        private FontSetting[] _fontSettingItems;
 
         public FontSetting[] FontSettingItems
         {
-            get
-            {
-                return _fontSettingItems;
-            }
-            set
-            {
-                _fontSettingItems = value;
-
-                NotifyPropertyChanged("FontSizeItems");
-            }
+            get => _fontSettingItems;
+            set => SetProperty(ref _fontSettingItems, value);
         }
 
-        private string _fontColor { get; set; }
+        private string _fontColor;
 
         public string FontColor
         {
-            get
-            {
-                return _fontColor;
-            }
-            set
-            {
-                _fontColor = value;
-
-                NotifyPropertyChanged("FontColor");
-            }
+            get => _fontColor;
+            set => SetProperty(ref _fontColor, value);
         }
 
-        private string _alertFontColor { get; set; }
+        private string _alertFontColor;
 
         public string AlertFontColor
         {
-            get
-            {
-                return _alertFontColor;
-            }
-            set
-            {
-                _alertFontColor = value;
-
-                NotifyPropertyChanged("AlertFontColor");
-            }
+            get => _alertFontColor;
+            set => SetProperty(ref _alertFontColor, value);
         }
 
-        private bool _alertBlink { get; set; } = true;
+        private bool _alertBlink = true;
         
         public bool AlertBlink
         {
-            get
-            {
-                return _alertBlink;
-            }
-            set
-            {
-                _alertBlink = value;
-
-                NotifyPropertyChanged("AlertBlink");
-            }
+            get => _alertBlink;
+            set => SetProperty(ref _alertBlink, value);
         }
 
-        private DateSetting _dateSetting { get; set; }
+        private DateSetting _dateSetting;
 
         public DateSetting DateSetting
         {
-            get
-            {
-                return _dateSetting;
-            }
-            set
-            {
-                _dateSetting = value;
-
-                NotifyPropertyChanged("DateSetting");
-            }
+            get => _dateSetting;
+            set => SetProperty(ref _dateSetting, value);
         }
 
-        private DateSetting[] _dateSettingItems { get; set; }
+        private DateSetting[] _dateSettingItems;
 
         public DateSetting[] DateSettingItems
         {
-            get
-            {
-                return _dateSettingItems;
-            }
-            set
-            {
-                _dateSettingItems = value;
-
-                NotifyPropertyChanged("DateSettingItems");
-            }
+            get => _dateSettingItems;
+            set => SetProperty(ref _dateSettingItems, value);
         }
 
-        private bool _collapseMenuBar { get; set; }
+        private bool _collapseMenuBar;
 
         public bool CollapseMenuBar
         {
-            get
-            {
-                return _collapseMenuBar;
-            }
-            set
-            {
-                _collapseMenuBar = value;
-
-                NotifyPropertyChanged("CollapseMenuBar");
-            }
+            get => _collapseMenuBar;
+            set => SetProperty(ref _collapseMenuBar, value);
         }
 
-        private bool _initiallyHidden { get; set; }
+        private bool _initiallyHidden;
         
         public bool InitiallyHidden
         {
-            get
-            {
-                return _initiallyHidden;
-            }
-            set
-            {
-                _initiallyHidden = value;
-
-                NotifyPropertyChanged("InitiallyHidden");
-            }
+            get => _initiallyHidden;
+            set => SetProperty(ref _initiallyHidden, value);
         }
 
-        private bool _showMachineName { get; set; } = true;
+        private bool _showMachineName = true;
 
         public bool ShowMachineName
         {
-            get
-            {
-                return _showMachineName;
-            }
-            set
-            {
-                _showMachineName = value;
-
-                NotifyPropertyChanged("ShowMachineName");
-            }
+            get => _showMachineName;
+            set => SetProperty(ref _showMachineName, value);
         }
 
-        private bool _showClock { get; set; }
+        private bool _showClock;
 
         public bool ShowClock
         {
-            get
-            {
-                return _showClock;
-            }
-            set
-            {
-                _showClock = value;
-
-                NotifyPropertyChanged("ShowClock");
-            }
+            get => _showClock;
+            set => SetProperty(ref _showClock, value);
         }
 
-        private bool _clock24HR { get; set; }
+        private bool _clock24HR;
 
         public bool Clock24HR
         {
-            get
-            {
-                return _clock24HR;
-            }
-            set
-            {
-                _clock24HR = value;
-
-                NotifyPropertyChanged("Clock24HR");
-            }
+            get => _clock24HR;
+            set => SetProperty(ref _clock24HR, value);
         }
 
         private ObservableCollection<MonitorConfig> _monitorConfig { get; set; }
@@ -873,136 +589,72 @@ namespace SidebarDiagnostics.Models
                     }
                 }
 
-                NotifyPropertyChanged("MonitorConfig");
+                NotifyPropertyChanged(nameof(MonitorConfig));
             }
         }
 
-        private Hotkey _toggleKey { get; set; }
+        private Hotkey _toggleKey;
 
         public Hotkey ToggleKey
         {
-            get
-            {
-                return _toggleKey;
-            }
-            set
-            {
-                _toggleKey = value;
-
-                NotifyPropertyChanged("ToggleKey");
-            }
+            get => _toggleKey;
+            set => SetProperty(ref _toggleKey, value);
         }
 
-        private Hotkey _showKey { get; set; }
+        private Hotkey _showKey;
 
         public Hotkey ShowKey
         {
-            get
-            {
-                return _showKey;
-            }
-            set
-            {
-                _showKey = value;
-
-                NotifyPropertyChanged("ShowKey");
-            }
+            get => _showKey;
+            set => SetProperty(ref _showKey, value);
         }
 
-        private Hotkey _hideKey { get; set; }
+        private Hotkey _hideKey;
 
         public Hotkey HideKey
         {
-            get
-            {
-                return _hideKey;
-            }
-            set
-            {
-                _hideKey = value;
-
-                NotifyPropertyChanged("HideKey");
-            }
+            get => _hideKey;
+            set => SetProperty(ref _hideKey, value);
         }
 
-        private Hotkey _reloadKey { get; set; }
+        private Hotkey _reloadKey;
 
         public Hotkey ReloadKey
         {
-            get
-            {
-                return _reloadKey;
-            }
-            set
-            {
-                _reloadKey = value;
-
-                NotifyPropertyChanged("ReloadKey");
-            }
+            get => _reloadKey;
+            set => SetProperty(ref _reloadKey, value);
         }
 
-        private Hotkey _closeKey { get; set; }
+        private Hotkey _closeKey;
 
         public Hotkey CloseKey
         {
-            get
-            {
-                return _closeKey;
-            }
-            set
-            {
-                _closeKey = value;
-
-                NotifyPropertyChanged("CloseKey");
-            }
+            get => _closeKey;
+            set => SetProperty(ref _closeKey, value);
         }
 
-        private Hotkey _cycleEdgeKey { get; set; }
+        private Hotkey _cycleEdgeKey;
 
         public Hotkey CycleEdgeKey
         {
-            get
-            {
-                return _cycleEdgeKey;
-            }
-            set
-            {
-                _cycleEdgeKey = value;
-
-                NotifyPropertyChanged("CycleEdgeKey");
-            }
+            get => _cycleEdgeKey;
+            set => SetProperty(ref _cycleEdgeKey, value);
         }
 
-        private Hotkey _cycleScreenKey { get; set; }
+        private Hotkey _cycleScreenKey;
 
         public Hotkey CycleScreenKey
         {
-            get
-            {
-                return _cycleScreenKey;
-            }
-            set
-            {
-                _cycleScreenKey = value;
-
-                NotifyPropertyChanged("CycleScreenKey");
-            }
+            get => _cycleScreenKey;
+            set => SetProperty(ref _cycleScreenKey, value);
         }
 
-        private Hotkey _reserveSpaceKey { get; set; }
+        private Hotkey _reserveSpaceKey;
 
         public Hotkey ReserveSpaceKey
         {
-            get
-            {
-                return _reserveSpaceKey;
-            }
-            set
-            {
-                _reserveSpaceKey = value;
-
-                NotifyPropertyChanged("ReserveSpaceKey");
-            }
+            get => _reserveSpaceKey;
+            set => SetProperty(ref _reserveSpaceKey, value);
         }
     }
 

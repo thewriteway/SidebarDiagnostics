@@ -10,7 +10,7 @@ using SidebarDiagnostics.Monitoring;
 
 namespace SidebarDiagnostics.Models
 {
-    public class GraphModel : INotifyPropertyChanged, IDisposable
+    public class GraphModel : PropertyChangedBase, IDisposable
     {
         public GraphModel(Plot plot)
         {
@@ -94,16 +94,6 @@ namespace SidebarDiagnostics.Models
                     });
             }
         }
-
-        public void NotifyPropertyChanged(string propertyName)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         private void BindMonitors(MonitorPanel[] panels)
         {
@@ -207,36 +197,20 @@ namespace SidebarDiagnostics.Models
             }
         }
 
-        private string _title { get; set; } = Resources.GraphTitle;
+        private string _title = Resources.GraphTitle;
 
         public string Title
         {
-            get
-            {
-                return _title;
-            }
-            set
-            {
-                _title = value;
-
-                NotifyPropertyChanged("Title");
-            }
+            get => _title;
+            set => SetProperty(ref _title, value);
         }
 
-        private MonitorPanel[] _monitorItems { get; set; }
+        private MonitorPanel[] _monitorItems;
 
         public MonitorPanel[] MonitorItems
         {
-            get
-            {
-                return _monitorItems;
-            }
-            set
-            {
-                _monitorItems = value;
-
-                NotifyPropertyChanged("MonitorItems");
-            }
+            get => _monitorItems;
+            set => SetProperty(ref _monitorItems, value);
         }
 
         private MonitorPanel _monitor { get; set; }
@@ -260,24 +234,16 @@ namespace SidebarDiagnostics.Models
                     BindHardware(_monitor.Monitors);
                 }
 
-                NotifyPropertyChanged("Monitor");
+                NotifyPropertyChanged(nameof(Monitor));
             }
         }
 
-        private iMonitor[] _hardwareItems { get; set; }
+        private iMonitor[] _hardwareItems;
 
         public iMonitor[] HardwareItems
         {
-            get
-            {
-                return _hardwareItems;
-            }
-            set
-            {
-                _hardwareItems = value;
-
-                NotifyPropertyChanged("HardwareItems");
-            }
+            get => _hardwareItems;
+            set => SetProperty(ref _hardwareItems, value);
         }
 
         private iMonitor _hardware { get; set; }
@@ -305,24 +271,16 @@ namespace SidebarDiagnostics.Models
                     Title = string.Format("{0} - {1}", Resources.GraphTitle, _hardware.Name);
                 }
 
-                NotifyPropertyChanged("Hardware");
+                NotifyPropertyChanged(nameof(Hardware));
             }
         }
 
-        private iMetric[] _metricItems { get; set; }
+        private iMetric[] _metricItems;
 
         public iMetric[] MetricItems
         {
-            get
-            {
-                return _metricItems;
-            }
-            set
-            {
-                _metricItems = value;
-
-                NotifyPropertyChanged("MetricItems");
-            }
+            get => _metricItems;
+            set => SetProperty(ref _metricItems, value);
         }
 
         private ObservableCollection<iMetric> _metrics { get; set; }
@@ -352,7 +310,7 @@ namespace SidebarDiagnostics.Models
                     _metrics.CollectionChanged += Metrics_CollectionChanged;
                 }
 
-                NotifyPropertyChanged("Metrics");
+                NotifyPropertyChanged(nameof(Metrics));
             }
         }
 
@@ -372,36 +330,20 @@ namespace SidebarDiagnostics.Models
             }
         }
 
-        private int _duration { get; set; } = 15;
+        private int _duration = 15;
 
         public int Duration
         {
-            get
-            {
-                return _duration;
-            }
-            set
-            {
-                _duration = value;
-
-                NotifyPropertyChanged("Duration");
-            }
+            get => _duration;
+            set => SetProperty(ref _duration, value);
         }
 
-        private bool _expandConfig { get; set; } = true;
+        private bool _expandConfig = true;
 
         public bool ExpandConfig
         {
-            get
-            {
-                return _expandConfig;
-            }
-            set
-            {
-                _expandConfig = value;
-
-                NotifyPropertyChanged("ExpandConfig");
-            }
+            get => _expandConfig;
+            set => SetProperty(ref _expandConfig, value);
         }
 
         private Plot _plot { get; set; }

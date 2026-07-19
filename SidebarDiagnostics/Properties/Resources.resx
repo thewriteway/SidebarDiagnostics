@@ -436,6 +436,10 @@
     <value>Change Log</value>
     <comment>Title of the change log window</comment>
   </data>
+  <data name="ErrorLogged" xml:space="preserve">
+    <value>This error has been logged to {0}</value>
+    <comment>Note in the error popup showing where the error log file was written</comment>
+  </data>
   <data name="ErrorPerformanceCounter" xml:space="preserve">
     <value>Your Performance Counter cache is corrupted. Click OK to visit the wiki and fix this error.</value>
     <comment>Text of the performance counter error</comment>

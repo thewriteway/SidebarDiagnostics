@@ -3,10 +3,11 @@ using System.ComponentModel;
 using System.Windows.Threading;
 using SidebarDiagnostics.Monitoring;
 using SidebarDiagnostics.Utilities;
+using SidebarDiagnostics.Framework;
 
 namespace SidebarDiagnostics.Models
 {
-    public class SidebarModel : INotifyPropertyChanged, IDisposable
+    public class SidebarModel : PropertyChangedBase, IDisposable
     {
         public SidebarModel()
         {
@@ -64,16 +65,6 @@ namespace SidebarDiagnostics.Models
             ResumeClock();
             ResumeMonitors();
         }
-
-        public void NotifyPropertyChanged(string propertyName)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         private void InitMachineName()
         {
@@ -236,132 +227,68 @@ namespace SidebarDiagnostics.Models
             }
         }
 
-        private bool _ready { get; set; } = false;
+        private bool _ready = false;
 
         public bool Ready
         {
-            get
-            {
-                return _ready;
-            }
-            set
-            {
-                _ready = value;
-
-                NotifyPropertyChanged("Ready");
-            }
+            get => _ready;
+            set => SetProperty(ref _ready, value);
         }
 
-        private bool _showMachineName { get; set; }
+        private bool _showMachineName;
 
         public bool ShowMachineName
         {
-            get
-            {
-                return _showMachineName;
-            }
-            set
-            {
-                _showMachineName = value;
-
-                NotifyPropertyChanged("ShowMachineName");
-            }
+            get => _showMachineName;
+            set => SetProperty(ref _showMachineName, value);
         }
 
-        private string _machineName { get; set; }
+        private string _machineName;
 
         public string MachineName
         {
-            get
-            {
-                return _machineName;
-            }
-            set
-            {
-                _machineName = value;
-
-                NotifyPropertyChanged("MachineName");
-            }
+            get => _machineName;
+            set => SetProperty(ref _machineName, value);
         }
 
-        private bool _showClock { get; set; }
+        private bool _showClock;
 
         public bool ShowClock
         {
-            get
-            {
-                return _showClock;
-            }
-            set
-            {
-                _showClock = value;
-
-                NotifyPropertyChanged("ShowClock");
-            }
+            get => _showClock;
+            set => SetProperty(ref _showClock, value);
         }
 
-        private string _time { get; set; }
+        private string _time;
 
         public string Time
         {
-            get
-            {
-                return _time;
-            }
-            set
-            {
-                _time = value;
-
-                NotifyPropertyChanged("Time");
-            }
+            get => _time;
+            set => SetProperty(ref _time, value);
         }
 
-        private bool _showDate { get; set; }
+        private bool _showDate;
 
         public bool ShowDate
         {
-            get
-            {
-                return _showDate;
-            }
-            set
-            {
-                _showDate = value;
-
-                NotifyPropertyChanged("ShowDate");
-            }
+            get => _showDate;
+            set => SetProperty(ref _showDate, value);
         }
 
-        private string _date { get; set; }
+        private string _date;
 
         public string Date
         {
-            get
-            {
-                return _date;
-            }
-            set
-            {
-                _date = value;
-
-                NotifyPropertyChanged("Date");
-            }
+            get => _date;
+            set => SetProperty(ref _date, value);
         }
 
-        private MonitorManager _monitorManager { get; set; }
+        private MonitorManager _monitorManager;
 
         public MonitorManager MonitorManager
         {
-            get
-            {
-                return _monitorManager;
-            }
-            set
-            {
-                _monitorManager = value;
-
-                NotifyPropertyChanged("MonitorManager");
-            }
+            get => _monitorManager;
+            set => SetProperty(ref _monitorManager, value);
         }
 
         private DispatcherTimer _clockTimer { get; set; }

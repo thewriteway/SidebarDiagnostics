@@ -1,0 +1,42 @@
+name: Feature request
+description: Suggest an idea for Sidebar Diagnostics
+title: "[Feature Request]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for your idea!
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Scope
+      description: |
+        What is the scope of your idea? If you choose `Other`, please describe the detail in `What problem`.
+      multiple: false
+      options:
+        - "Sidebar UI / appearance"
+        - "Monitoring / sensors"
+        - "Settings / configuration"
+        - "Hotkeys / integration"
+        - "Other"
+    validations:
+      required: true
+  - type: textarea
+    id: what-problem
+    attributes:
+      label: What problem
+      description: |
+        Explain your use case, context, and rationale behind this feature request.
+        More importantly, what is the end user experience you are trying to build that led to the need for this feature?
+    validations:
+      required: true
+  - type: textarea
+    id: feature
+    attributes:
+      label: Feature
+      description: |
+        Describe the solution you'd like.
+        A clear and concise description of what you want to happen.
+    validations:
+      required: true

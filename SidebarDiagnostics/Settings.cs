@@ -10,7 +10,7 @@ using System.Globalization;
 namespace SidebarDiagnostics.Framework
 {
     [JsonObject(MemberSerialization.OptIn)]
-    public sealed class Settings : INotifyPropertyChanged
+    public sealed class Settings : PropertyChangedBase
     {
         private Settings() { }
 
@@ -77,558 +77,292 @@ namespace SidebarDiagnostics.Framework
             return _return ?? new Settings();
         }
 
-        public void NotifyPropertyChanged(string propertyName)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private string _changeLog { get; set; } = null;
+        private string _changeLog = null;
 
         [JsonProperty]
         public string ChangeLog
         {
-            get
-            {
-                return _changeLog;
-            }
-            set
-            {
-                _changeLog = value;
-
-                NotifyPropertyChanged("ChangeLog");
-            }
+            get => _changeLog;
+            set => SetProperty(ref _changeLog, value);
         }
 
-        private bool _initialSetup { get; set; } = true;
+        private bool _initialSetup = true;
 
         [JsonProperty]
         public bool InitialSetup
         {
-            get
-            {
-                return _initialSetup;
-            }
-            set
-            {
-                _initialSetup = value;
-
-                NotifyPropertyChanged("InitialSetup");
-            }
+            get => _initialSetup;
+            set => SetProperty(ref _initialSetup, value);
         }
 
-        private DockEdge _dockEdge { get; set; } = DockEdge.Right;
+        private DockEdge _dockEdge = DockEdge.Right;
 
         [JsonProperty]
         public DockEdge DockEdge
         {
-            get
-            {
-                return _dockEdge;
-            }
-            set
-            {
-                _dockEdge = value;
-
-                NotifyPropertyChanged("DockEdge");
-            }
+            get => _dockEdge;
+            set => SetProperty(ref _dockEdge, value);
         }
 
-        private int _screenIndex { get; set; } = 0;
+        private int _screenIndex = 0;
 
         [JsonProperty]
         public int ScreenIndex
         {
-            get
-            {
-                return _screenIndex;
-            }
-            set
-            {
-                _screenIndex = value;
-
-                NotifyPropertyChanged("ScreenIndex");
-            }
+            get => _screenIndex;
+            set => SetProperty(ref _screenIndex, value);
         }
 
-        private string _culture { get; set; } = Utilities.Culture.DEFAULT;
+        private string _culture = Utilities.Culture.DEFAULT;
 
         [JsonProperty]
         public string Culture
         {
-            get
-            {
-                return _culture;
-            }
-            set
-            {
-                _culture = value;
-
-                NotifyPropertyChanged("Culture");
-            }
+            get => _culture;
+            set => SetProperty(ref _culture, value);
         }
 
-        private bool _useAppBar { get; set; } = true;
+        private bool _useAppBar = true;
         
         [JsonProperty]
         public bool UseAppBar
         {
-            get
-            {
-                return _useAppBar;
-            }
-            set
-            {
-                _useAppBar = value;
-
-                NotifyPropertyChanged("UseAppBar");
-            }
+            get => _useAppBar;
+            set => SetProperty(ref _useAppBar, value);
         }
 
-        private bool _alwaysTop { get; set; } = true;
+        private bool _alwaysTop = true;
 
         [JsonProperty]
         public bool AlwaysTop
         {
-            get
-            {
-                return _alwaysTop;
-            }
-            set
-            {
-                _alwaysTop = value;
-
-                NotifyPropertyChanged("AlwaysTop");
-            }
+            get => _alwaysTop;
+            set => SetProperty(ref _alwaysTop, value);
         }
 
-        private bool _runAtStartup { get; set; } = true;
+        private bool _runAtStartup = true;
 
         [JsonProperty]
         public bool RunAtStartup
         {
-            get
-            {
-                return _runAtStartup;
-            }
-            set
-            {
-                _runAtStartup = value;
-
-                NotifyPropertyChanged("RunAtStartup");
-            }
+            get => _runAtStartup;
+            set => SetProperty(ref _runAtStartup, value);
         }
 
-        private double _uiScale { get; set; } = 1d;
+        private double _uiScale = 1d;
 
         [JsonProperty]
         public double UIScale
         {
-            get
-            {
-                return _uiScale;
-            }
-            set
-            {
-                _uiScale = value;
-
-                NotifyPropertyChanged("UIScale");
-            }
+            get => _uiScale;
+            set => SetProperty(ref _uiScale, value);
         }
 
-        private int _xOffset { get; set; } = 0;
+        private int _xOffset = 0;
 
         [JsonProperty]
         public int XOffset
         {
-            get
-            {
-                return _xOffset;
-            }
-            set
-            {
-                _xOffset = value;
-
-                NotifyPropertyChanged("XOffset");
-            }
+            get => _xOffset;
+            set => SetProperty(ref _xOffset, value);
         }
 
-        private int _yOffset { get; set; } = 0;
+        private int _yOffset = 0;
 
         [JsonProperty]
         public int YOffset
         {
-            get
-            {
-                return _yOffset;
-            }
-            set
-            {
-                _yOffset = value;
-
-                NotifyPropertyChanged("YOffset");
-            }
+            get => _yOffset;
+            set => SetProperty(ref _yOffset, value);
         }
 
-        private int _pollingInterval { get; set; } = 1000;
+        private int _pollingInterval = 1000;
 
         [JsonProperty]
         public int PollingInterval
         {
-            get
-            {
-                return _pollingInterval;
-            }
-            set
-            {
-                _pollingInterval = value;
-
-                NotifyPropertyChanged("PollingInterval");
-            }
+            get => _pollingInterval;
+            set => SetProperty(ref _pollingInterval, value);
         }
 
-        private bool _toolbarMode { get; set; } = true;
+        private bool _toolbarMode = true;
 
         [JsonProperty]
         public bool ToolbarMode
         {
-            get
-            {
-                return _toolbarMode;
-            }
-            set
-            {
-                _toolbarMode = value;
-
-                NotifyPropertyChanged("ToolbarMode");
-            }
+            get => _toolbarMode;
+            set => SetProperty(ref _toolbarMode, value);
         }
 
-        private bool _clickThrough { get; set; } = false;
+        private bool _clickThrough = false;
 
         [JsonProperty]
         public bool ClickThrough
         {
-            get
-            {
-                return _clickThrough;
-            }
-            set
-            {
-                _clickThrough = value;
-
-                NotifyPropertyChanged("ClickThrough");
-            }
+            get => _clickThrough;
+            set => SetProperty(ref _clickThrough, value);
         }
 
-        private bool _showTrayIcon { get; set; } = true;
+        private bool _showTrayIcon = true;
 
         [JsonProperty]
         public bool ShowTrayIcon
         {
-            get
-            {
-                return _showTrayIcon;
-            }
-            set
-            {
-                _showTrayIcon = value;
-
-                NotifyPropertyChanged("ShowTrayIcon");
-            }
+            get => _showTrayIcon;
+            set => SetProperty(ref _showTrayIcon, value);
         }
 
-        private bool _collapseMenuBar { get; set; } = false;
+        private bool _collapseMenuBar = false;
 
         [JsonProperty]
         public bool CollapseMenuBar
         {
-            get
-            {
-                return _collapseMenuBar;
-            }
-            set
-            {
-                _collapseMenuBar = value;
-
-                NotifyPropertyChanged("CollapseMenuBar");
-            }
+            get => _collapseMenuBar;
+            set => SetProperty(ref _collapseMenuBar, value);
         }
 
-        private bool _initiallyHidden { get; set; } = false;
+        private bool _initiallyHidden = false;
 
         [JsonProperty]
         public bool InitiallyHidden
         {
-            get
-            {
-                return _initiallyHidden;
-            }
-            set
-            {
-                _initiallyHidden = value;
-                
-                NotifyPropertyChanged("InitiallyHidden");
-            }
+            get => _initiallyHidden;
+            set => SetProperty(ref _initiallyHidden, value);
         }
 
-        private int _sidebarWidth { get; set; } = 180;
+        private int _sidebarWidth = 180;
 
         [JsonProperty]
         public int SidebarWidth
         {
-            get
-            {
-                return _sidebarWidth;
-            }
-            set
-            {
-                _sidebarWidth = value;
-
-                NotifyPropertyChanged("SidebarWidth");
-            }
+            get => _sidebarWidth;
+            set => SetProperty(ref _sidebarWidth, value);
         }
 
-        private bool _autoBGColor { get; set; } = false;
+        private bool _autoBGColor = false;
 
         [JsonProperty]
         public bool AutoBGColor
         {
-            get
-            {
-                return _autoBGColor;
-            }
-            set
-            {
-                _autoBGColor = value;
-
-                NotifyPropertyChanged("AutoBGColor");
-            }
+            get => _autoBGColor;
+            set => SetProperty(ref _autoBGColor, value);
         }
 
-        private string _bgColor { get; set; } = "#000000";
+        private string _bgColor = "#000000";
 
         [JsonProperty]
         public string BGColor
         {
-            get
-            {
-                return _bgColor;
-            }
-            set
-            {
-                _bgColor = value;
-
-                NotifyPropertyChanged("BGColor");
-            }
+            get => _bgColor;
+            set => SetProperty(ref _bgColor, value);
         }
 
-        private double _bgOpacity { get; set; } = 0.85d;
+        private double _bgOpacity = 0.85d;
 
         [JsonProperty]
         public double BGOpacity
         {
-            get
-            {
-                return _bgOpacity;
-            }
-            set
-            {
-                _bgOpacity = value;
-
-                NotifyPropertyChanged("BGOpacity");
-            }
+            get => _bgOpacity;
+            set => SetProperty(ref _bgOpacity, value);
         }
 
-        private TextAlign _textAlign { get; set; } = TextAlign.Left;
+        private TextAlign _textAlign = TextAlign.Left;
 
         [JsonProperty]
         public TextAlign TextAlign
         {
-            get
-            {
-                return _textAlign;
-            }
-            set
-            {
-                _textAlign = value;
-
-                NotifyPropertyChanged("TextAlign");
-            }
+            get => _textAlign;
+            set => SetProperty(ref _textAlign, value);
         }
 
-        private FontSetting _fontSetting { get; set; } = FontSetting.x14;
+        private FontSetting _fontSetting = FontSetting.x14;
 
         [JsonProperty]
         public FontSetting FontSetting
         {
-            get
-            {
-                return _fontSetting;
-            }
-            set
-            {
-                _fontSetting = value;
-
-                NotifyPropertyChanged("FontSetting");
-            }
+            get => _fontSetting;
+            set => SetProperty(ref _fontSetting, value);
         }
 
-        private string _fontColor { get; set; } = "#FFFFFF";
+        private string _fontColor = "#FFFFFF";
         
         [JsonProperty]
         public string FontColor
         {
-            get
-            {
-                return _fontColor;
-            }
-            set
-            {
-                _fontColor = value;
-
-                NotifyPropertyChanged("FontColor");
-            }
+            get => _fontColor;
+            set => SetProperty(ref _fontColor, value);
         }
 
-        private string _alertFontColor { get; set; } = "#FF4136";
+        private string _alertFontColor = "#FF4136";
 
         [JsonProperty]
         public string AlertFontColor
         {
-            get
-            {
-                return _alertFontColor;
-            }
-            set
-            {
-                _alertFontColor = value;
-
-                NotifyPropertyChanged("AlertFontColor");
-            }
+            get => _alertFontColor;
+            set => SetProperty(ref _alertFontColor, value);
         }
 
-        private bool _alertBlink { get; set; } = true;
+        private bool _alertBlink = true;
 
         [JsonProperty]
         public bool AlertBlink
         {
-            get
-            {
-                return _alertBlink;
-            }
-            set
-            {
-                _alertBlink = value;
-
-                NotifyPropertyChanged("AlertBlink");
-            }
+            get => _alertBlink;
+            set => SetProperty(ref _alertBlink, value);
         }
 
-        private bool _showMachineName { get; set; } = false;
+        private bool _showMachineName = false;
 
         [JsonProperty]
         public bool ShowMachineName
         {
-            get
-            {
-                return _showMachineName;
-            }
-            set
-            {
-                _showMachineName = value;
-
-                NotifyPropertyChanged("ShowMachineName");
-            }
+            get => _showMachineName;
+            set => SetProperty(ref _showMachineName, value);
         }
 
-        private bool _showClock { get; set; } = true;
+        private bool _showClock = true;
 
         [JsonProperty]
         public bool ShowClock
         {
-            get
-            {
-                return _showClock;
-            }
-            set
-            {
-                _showClock = value;
-
-                NotifyPropertyChanged("ShowClock");
-            }
+            get => _showClock;
+            set => SetProperty(ref _showClock, value);
         }
 
-        private bool _clock24HR { get; set; } = false;
+        private bool _clock24HR = false;
 
         [JsonProperty]
         public bool Clock24HR
         {
-            get
-            {
-                return _clock24HR;
-            }
-            set
-            {
-                _clock24HR = value;
-
-                NotifyPropertyChanged("Clock24HR");
-            }
+            get => _clock24HR;
+            set => SetProperty(ref _clock24HR, value);
         }
 
-        private DateSetting _dateSetting { get; set; } = DateSetting.Short;
+        private DateSetting _dateSetting = DateSetting.Short;
 
         [JsonProperty]
         public DateSetting DateSetting
         {
-            get
-            {
-                return _dateSetting;
-            }
-            set
-            {
-                _dateSetting = value;
-
-                NotifyPropertyChanged("DateSetting");
-            }
+            get => _dateSetting;
+            set => SetProperty(ref _dateSetting, value);
         }
 
-        private MonitorConfig[] _monitorConfig { get; set; } = null;
+        private MonitorConfig[] _monitorConfig = null;
 
         [JsonProperty]
         public MonitorConfig[] MonitorConfig
         {
-            get
-            {
-                return _monitorConfig;
-            }
-            set
-            {
-                _monitorConfig = value;
-
-                NotifyPropertyChanged("MonitorConfig");
-            }
+            get => _monitorConfig;
+            set => SetProperty(ref _monitorConfig, value);
         }
 
-        private Hotkey[] _hotkeys { get; set; } = new Hotkey[0];
+        private Hotkey[] _hotkeys = new Hotkey[0];
 
         [JsonProperty]
         public Hotkey[] Hotkeys
         {
-            get
-            {
-                return _hotkeys;
-            }
-            set
-            {
-                _hotkeys = value;
-
-                NotifyPropertyChanged("Hotkeys");
-            }
+            get => _hotkeys;
+            set => SetProperty(ref _hotkeys, value);
         }
 
         private static Settings _instance { get; set; } = null;

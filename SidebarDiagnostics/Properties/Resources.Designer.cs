@@ -484,6 +484,15 @@ namespace SidebarDiagnostics.Framework {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This error has been logged to {0}.
+        /// </summary>
+        public static string ErrorLogged {
+            get {
+                return ResourceManager.GetString("ErrorLogged", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   Looks up a localized string similar to Your Performance Counter cache is corrupted. Click OK to visit the wiki and fix this error..
         /// </summary>
         public static string ErrorPerformanceCounter {
