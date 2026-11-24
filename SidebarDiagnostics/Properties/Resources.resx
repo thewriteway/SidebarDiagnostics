@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -315,6 +315,14 @@
   <data name="GPUFanLabel" xml:space="preserve">
     <value>Fan</value>
     <comment>Short label for GPU voltage metric</comment>
+  </data>
+  <data name="GPUPower" xml:space="preserve">
+    <value>Power</value>
+    <comment>Full name for GPU power metric</comment>
+  </data>
+  <data name="GPUPowerLabel" xml:space="preserve">
+    <value>Power</value>
+    <comment>Short label for GPU power metric</comment>
   </data>
   <data name="GPUTemp" xml:space="preserve">
     <value>Temperature</value>

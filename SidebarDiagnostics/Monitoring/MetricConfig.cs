@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -90,6 +90,7 @@ namespace SidebarDiagnostics.Monitoring
         GPUVoltage = 15,
         GPUTemp = 16,
         GPUFan = 17,
+        GPUPower = 28,
 
         NetworkIP = 26,
         NetworkExtIP = 27,

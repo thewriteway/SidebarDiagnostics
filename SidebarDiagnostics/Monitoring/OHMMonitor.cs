@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -112,6 +112,19 @@ namespace SidebarDiagnostics.Monitoring
         private void UpdateHardware()
         {
             _hardware.Update();
+        }
+
+        /// <summary>
+        /// Adapter index from the LHM identifier (e.g. "/gpu-nvidia/0"), used as the
+        /// NVML device index for the power reading.
+        /// </summary>
+        private int GetAdapterIndex()
+        {
+            string _id = _hardware.Identifier.ToString();
+            int _separator = _id.LastIndexOf('/');
+            int _index;
+
+            return _separator >= 0 && int.TryParse(_id.Substring(_separator + 1), out _index) ? _index : 0;
         }
 
         private void InitCPU(IHardware board, MetricConfig[] metrics, bool roundAll, bool allCoreClocks, bool useGHz, bool useFahrenheit, double tempAlert)
@@ -389,6 +402,28 @@ namespace SidebarDiagnostics.Monitoring
                 if (_voltage != null)
                 {
                     _sensorList.Add(new OHMMetric(_voltage, MetricKey.GPUVoltage, DataType.Voltage, null, roundAll));
+                }
+            }
+
+            if (metrics.IsEnabled(MetricKey.GPUPower))
+            {
+                // AMD exposes power as a Power-typed sensor ("GPU Core"). Nvidia via
+                // NVML ("GPU Package") or, failing that, the NVAPI power topology
+                // surface, which LibreHardwareMonitor exposes as Load-typed sensors.
+                ISensor _powerSensor = _hardware.Sensors.Where(s => s.SensorType == SensorType.Power && (s.Name.Contains("Package") || s.Name.Contains("GPU Core"))).FirstOrDefault() ??
+                    _hardware.Sensors.Where(s => s.SensorType == SensorType.Power).FirstOrDefault();
+
+                ISensor _nvapiPower = _hardware.Sensors.Where(s => s.SensorType == SensorType.Load && s.Name == "GPU Power").FirstOrDefault();
+
+                if (_hardware.HardwareType == HardwareType.GpuNvidia)
+                {
+                    // NVML reports the same wattage as nvidia-smi; prefer it because
+                    // NVAPI topology values can be far too low on some boards.
+                    _sensorList.Add(new NvidiaPowerMetric(GetAdapterIndex(), _powerSensor ?? _nvapiPower, MetricKey.GPUPower, DataType.Watts, null, roundAll));
+                }
+                else if (_powerSensor != null)
+                {
+                    _sensorList.Add(new OHMMetric(_powerSensor, MetricKey.GPUPower, DataType.Watts, null, roundAll));
                 }
             }
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -131,6 +131,9 @@ namespace SidebarDiagnostics.Monitoring
                 case MetricKey.GPUFan:
                     return Resources.GPUFan;
 
+                case MetricKey.GPUPower:
+                    return Resources.GPUPower;
+
                 case MetricKey.NetworkIP:
                     return Resources.NetworkIP;
 
@@ -223,6 +226,9 @@ namespace SidebarDiagnostics.Monitoring
 
                 case MetricKey.GPUFan:
                     return Resources.GPUFanLabel;
+
+                case MetricKey.GPUPower:
+                    return Resources.GPUPowerLabel;
 
                 case MetricKey.NetworkIP:
                     return Resources.NetworkIPLabel;
@@ -334,6 +340,9 @@ namespace SidebarDiagnostics.Monitoring
 
                 case DataType.IP:
                     return string.Empty;
+
+                case DataType.Watts:
+                    return " W";
 
                 default:
                     throw new ArgumentException("Invalid DataType.");
