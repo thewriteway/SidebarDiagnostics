@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -360,6 +360,7 @@ namespace SidebarDiagnostics.Monitoring
         RPM,
         Celcius,
         Fahrenheit,
-        IP
+        IP,
+        Watts
     }
 }
